@@ -3,6 +3,8 @@ package com.student_mng.student_management.entity;
 import com.student_mng.student_management.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 @Getter
 @Setter
@@ -14,8 +16,9 @@ import lombok.*;
 public abstract class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    @Column(updatable = false, nullable = false, unique = true)
+    private String id;
 
     @Column(unique = true, nullable = false)
     private String username;
@@ -25,3 +28,14 @@ public abstract class User {
     @Enumerated(EnumType.STRING)
     private Role role; // Role Enum (Student, Teacher, Admin, ClubHead)
 }
+
+
+
+
+/*
+
+event details
+
+ */
+
+
