@@ -10,10 +10,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 public class Event {
 
@@ -34,4 +30,46 @@ public class Event {
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
     private Set<Student> registeredStudents = new HashSet<>();
+
+    public Event () {}
+
+    public Event(String name, LocalDateTime eventDateTime, ClubHead clubHead,
+                 Set<Student> registeredStudents) {
+        this.name = name;
+        this.eventDateTime = eventDateTime;
+        this.clubHead = clubHead;
+        this.registeredStudents = registeredStudents;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public LocalDateTime getEventDateTime() {
+        return eventDateTime;
+    }
+
+    public void setEventDateTime(LocalDateTime eventDateTime) {
+        this.eventDateTime = eventDateTime;
+    }
+
+    public ClubHead getClubHead() {
+        return clubHead;
+    }
+
+    public void setClubHead(ClubHead clubHead) {
+        this.clubHead = clubHead;
+    }
+
+    public Set<Student> getRegisteredStudents() {
+        return registeredStudents;
+    }
+
+    public void setRegisteredStudents(Set<Student> registeredStudents) {
+        this.registeredStudents = registeredStudents;
+    }
 }

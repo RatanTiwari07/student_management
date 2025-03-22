@@ -1,17 +1,9 @@
 package com.student_mng.student_management.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 public class Attendance {
 
@@ -38,5 +30,73 @@ public class Attendance {
     private LectureSlot lectureSlot;
 
     private boolean isPresent;
+
+    public Attendance () {}
+
+    public Attendance(LocalDate date, Student student, Teacher teacher, Subject subject,
+                      LectureSlot lectureSlot, boolean isPresent) {
+        this.date = date;
+        this.student = student;
+        this.teacher = teacher;
+        this.subject = subject;
+        this.lectureSlot = lectureSlot;
+        this.isPresent = isPresent;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
+
+    public Subject getSubject() {
+        return subject;
+    }
+
+    public void setSubject(Subject subject) {
+        this.subject = subject;
+    }
+
+    public LectureSlot getLectureSlot() {
+        return lectureSlot;
+    }
+
+    public void setLectureSlot(LectureSlot lectureSlot) {
+        this.lectureSlot = lectureSlot;
+    }
+
+    public boolean isPresent() {
+        return isPresent;
+    }
+
+    public void setPresent(boolean present) {
+        isPresent = present;
+    }
 }
 

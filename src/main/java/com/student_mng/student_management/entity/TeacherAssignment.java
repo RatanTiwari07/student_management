@@ -31,5 +31,55 @@ public class TeacherAssignment {
     @ManyToOne
     @JoinColumn(name = "lecture_slot_id")
     private LectureSlot lectureSlot;
+
+    public TeacherAssignment () {}
+
+    public TeacherAssignment(Teacher teacher, ClassEntity assignedClass, Subject subject,
+                             LectureSlot lectureSlot) {
+        this.teacher = teacher;
+        this.assignedClass = assignedClass;
+        this.subject = subject;
+        this.lectureSlot = lectureSlot;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
+
+    public ClassEntity getAssignedClass() {
+        return assignedClass;
+    }
+
+    public void setAssignedClass(ClassEntity assignedClass) {
+        this.assignedClass = assignedClass;
+    }
+
+    public Subject getSubject() {
+        return subject;
+    }
+
+    public void setSubject(Subject subject) {
+        this.subject = subject;
+    }
+
+    public LectureSlot getLectureSlot() {
+        return lectureSlot;
+    }
+
+    public void setLectureSlot(LectureSlot lectureSlot) {
+        this.lectureSlot = lectureSlot;
+    }
 }
 
