@@ -24,6 +24,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String email;
+
     public User(String username, String password, Role role) {
         this.username = username;
         this.password = password;
@@ -67,6 +69,10 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
 

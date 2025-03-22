@@ -1,10 +1,6 @@
 package com.student_mng.student_management.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -14,6 +10,7 @@ import java.util.Set;
 public class Event {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id; // Unique event ID (String-based as per previous decisions)
 
     private String name;

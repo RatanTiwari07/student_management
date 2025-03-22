@@ -16,17 +16,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-import com.student_mng.student_management.config.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
 @RequestMapping("/auth")
 @RestController
-public class DemoController {
+public class AuthController {
 
-    @Autowired
-    UserRepository userRepo;
     @Autowired
 AuthenticationManager authenticationManager;
     @Autowired
@@ -37,6 +37,8 @@ AuthenticationManager authenticationManager;
     AdminRepository adminRepo;
     @Autowired
     JwtUtil jwtUtil;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @GetMapping("/check")
     public String check () {
@@ -45,19 +47,12 @@ AuthenticationManager authenticationManager;
 
     }
 
-    @GetMapping("/demo")
-    public String demoUser () {
-
-
-        return "done";
-    }
-
         @Autowired
         BCryptPasswordEncoder ps;
     @GetMapping("/regDemo")
     public Admin regDemoAdmin () {
 
-        Admin a = new Admin("lalitoam", ps.encode("123456") , Role.ADMIN, "CSE");
+        Admin a = new Admin("lalitoam", passwordEncoder.encode("123456"), Role.ADMIN, "CSE");
         adminRepo.save(a);
         return a;
     }
@@ -68,21 +63,15 @@ AuthenticationManager authenticationManager;
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 
-        // Load user details
         UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
 
-        // Fetch full user entity (to get role)
         Optional<User> user = userRepository.findByUsername(authRequest.getUsername());
         if (user.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
-        // Generate JWT token
         String token = jwtUtil.generateToken(user.get());
 
-        System.out.println(jwtUtil.extractUserId(token));
-
-        // Create response
         AuthResponse response = new AuthResponse(token,user.get().getId(), user.get().getRole().name());
 
         return ResponseEntity.ok(response);

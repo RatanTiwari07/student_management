@@ -1,5 +1,6 @@
 package com.student_mng.student_management.entity;
 
+import com.student_mng.student_management.enums.BatchType;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -8,55 +9,48 @@ import java.time.LocalDate;
 public class Attendance {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private LocalDate date;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id")
-    private Teacher teacher;
+    @JoinColumn(name = "teacher_assignment_id", nullable = false)
+    private TeacherAssignment teacherAssignment;
 
     @ManyToOne
-    @JoinColumn(name = "subject_id")
-    private Subject subject;
-
-    @ManyToOne
-    @JoinColumn(name = "lecture_slot_id")
+    @JoinColumn(name = "lecture_slot_id", nullable = false)
     private LectureSlot lectureSlot;
 
-    private boolean isPresent;
+    @Enumerated(EnumType.STRING)
+    private BatchType batch; // B1, B2, NULL (for THEORY)
+
+    @Column(nullable = false)
+    private LocalDate date;
+
+    @Column(nullable = false)
+    private boolean present;
 
     public Attendance () {}
 
-    public Attendance(LocalDate date, Student student, Teacher teacher, Subject subject,
-                      LectureSlot lectureSlot, boolean isPresent) {
-        this.date = date;
+    public Attendance(Student student, TeacherAssignment teacherAssignment,
+                      LectureSlot lectureSlot, BatchType batch, LocalDate date, boolean present) {
         this.student = student;
-        this.teacher = teacher;
-        this.subject = subject;
+        this.teacherAssignment = teacherAssignment;
         this.lectureSlot = lectureSlot;
-        this.isPresent = isPresent;
+        this.batch = batch;
+        this.date = date;
+        this.present = present;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 
     public Student getStudent() {
@@ -67,20 +61,12 @@ public class Attendance {
         this.student = student;
     }
 
-    public Teacher getTeacher() {
-        return teacher;
+    public TeacherAssignment getTeacherAssignment() {
+        return teacherAssignment;
     }
 
-    public void setTeacher(Teacher teacher) {
-        this.teacher = teacher;
-    }
-
-    public Subject getSubject() {
-        return subject;
-    }
-
-    public void setSubject(Subject subject) {
-        this.subject = subject;
+    public void setTeacherAssignment(TeacherAssignment teacherAssignment) {
+        this.teacherAssignment = teacherAssignment;
     }
 
     public LectureSlot getLectureSlot() {
@@ -91,12 +77,28 @@ public class Attendance {
         this.lectureSlot = lectureSlot;
     }
 
+    public BatchType getBatch() {
+        return batch;
+    }
+
+    public void setBatch(BatchType batch) {
+        this.batch = batch;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
     public boolean isPresent() {
-        return isPresent;
+        return present;
     }
 
     public void setPresent(boolean present) {
-        isPresent = present;
+        this.present = present;
     }
 }
 
