@@ -12,7 +12,7 @@ import java.time.LocalTime;
 public class LectureSlot {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private Long id;
 
     private DayOfWeek weekDayName; // Monday, Tuesday, etc.
