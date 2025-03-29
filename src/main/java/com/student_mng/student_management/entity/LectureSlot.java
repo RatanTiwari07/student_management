@@ -5,6 +5,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+
 @Entity
 public class LectureSlot {
 
@@ -12,15 +15,15 @@ public class LectureSlot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String weekDayName; // Monday, Tuesday, etc.
+    private DayOfWeek weekDayName; // Monday, Tuesday, etc.
 
-    private String startTime; // Example: "10:30 AM"
+    private LocalTime startTime; // Example: "10:30 AM"
 
-    private String endTime; // Example: "11:40 AM"
+    private LocalTime endTime; // Example: "11:40 AM"
 
     public LectureSlot () {}
 
-    public LectureSlot(String endTime, String startTime, String weekDayName) {
+    public LectureSlot(LocalTime endTime, LocalTime startTime, DayOfWeek weekDayName) {
         this.endTime = endTime;
         this.startTime = startTime;
         this.weekDayName = weekDayName;
@@ -34,27 +37,27 @@ public class LectureSlot {
         this.id = id;
     }
 
-    public String getEndTime() {
+    public LocalTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
 
-    public String getStartTime() {
+    public LocalTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 
-    public String getWeekDayName() {
+    public DayOfWeek getWeekDayName() {
         return weekDayName;
     }
 
-    public void setWeekDayName(String weekDayName) {
+    public void setWeekDayName(DayOfWeek weekDayName) {
         this.weekDayName = weekDayName;
     }
 }
