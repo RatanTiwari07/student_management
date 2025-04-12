@@ -6,14 +6,21 @@ import com.student_mng.student_management.dto.StudentDTO;
 import com.student_mng.student_management.dto.TeacherDTO;
 import com.student_mng.student_management.entity.*;
 import com.student_mng.student_management.enums.Role;
+import com.student_mng.student_management.exception.ResourceNotFoundException;
+import com.student_mng.student_management.exception.ValidationException;
 import com.student_mng.student_management.repository.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Validated
+@Slf4j
 public class AdminService {
 
     @Autowired
@@ -79,16 +86,27 @@ public class AdminService {
     }
 
     public Student registerStudent(StudentDTO studentDTO) {
+        // Validate roll number
+        if (studentDTO.rollNumber() == null || studentDTO.rollNumber().trim().isEmpty()) {
+            throw new ValidationException("Roll number cannot be empty");
+        }
+        
+        // Validate class existence
         ClassEntity studentClass = classRepository.findById(studentDTO.classId())
-                .orElseThrow(() -> new RuntimeException("Class not found"));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Class not found with id: " + studentDTO.classId()));
+        
+        // Check for duplicate email
+        if (userRepository.existsByEmail(studentDTO.email())) {
+            throw new ValidationException("Email already exists");
+        }
+        
         Student student = new Student();
         student.setUsername(studentDTO.username());
         student.setEmail(studentDTO.email());
         student.setPassword(passwordEncoder.encode(studentDTO.password()));
         student.setRole(Role.STUDENT);
         student.setRollNumber(studentDTO.rollNumber());
-        student.setStudentClass(studentClass); // Assigning class
+        student.setStudentClass(studentClass);
         return studentRepository.save(student);
     }
 
@@ -105,4 +123,46 @@ public class AdminService {
         return studentRepository.saveAll(students);
     }
 
+    public List<Teacher> getAllTeachers() {
+        return teacherRepository.findAll();
+    }
+
+    public List<Student> getAllStudents() {
+        return studentRepository.findAll();
+    }
+
+    public List<ClassEntity> getAllClasses() {
+        return classRepository.findAll();
+    }
+
+    public List<Subject> getAllSubjects() {
+        return subjectRepository.findAll();
+    }
+
+    public List<ClubHead> getAllClubHeads() {
+        return clubHeadRepository.findAll();
+    }
+
+    public Optional<Teacher> getTeacherById(String id) {
+        return teacherRepository.findById(id);
+    }
+
+    public Optional<Student> getStudentById(String id) {
+        return studentRepository.findById(id);
+    }
+
+    public Optional<ClassEntity> getClassById(String id) {
+        return classRepository.findById(id);
+    }
+
+    public List<Student> getUnassignedStudents() {
+        return studentRepository.findByStudentClassIsNull();
+    }
+
+    private void validateStudentData(StudentDTO studentDTO) {
+        if (studentDTO.rollNumber() == null || studentDTO.rollNumber().trim().isEmpty()) {
+            throw new ValidationException("Roll number cannot be empty");
+        }
+        // Add more validation rules
+    }
 }

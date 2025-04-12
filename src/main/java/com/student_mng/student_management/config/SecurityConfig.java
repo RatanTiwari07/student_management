@@ -1,7 +1,9 @@
 package com.student_mng.student_management.config;
 
+import com.google.common.util.concurrent.RateLimiter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -37,10 +39,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/teacher/**").hasRole("TEACHER")
-                        .requestMatchers("/student/**").hasRole("STUDENT")
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/teacher/**").hasRole("TEACHER")
+                        .requestMatchers("/api/v1/student/**").hasRole("STUDENT")
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/public/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .csrf(AbstractHttpConfigurer::disable)
@@ -77,6 +80,11 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public RateLimiter rateLimiter() {
+        return RateLimiter.create(100.0); // 100 requests per second
     }
 
 }
