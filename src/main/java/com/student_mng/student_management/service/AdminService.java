@@ -28,6 +28,8 @@ public class AdminService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private AdminRepository adminRepository;
+    @Autowired
     private TeacherRepository teacherRepository;
     @Autowired
     private TeacherAssignmentRepository teacherAssignmentRepository;
@@ -46,13 +48,14 @@ public class AdminService {
     }
 
     //  Register Admin (Encrypt Password)
-    public User registerAdmin(AdminDTO adminDTO) {
-        User admin = new User();
+    public Admin registerAdmin(AdminDTO adminDTO) {
+        Admin admin = new Admin();
         admin.setUsername(adminDTO.username());
         admin.setEmail(adminDTO.email());
+        admin.setDepartment(adminDTO.dept());
         admin.setPassword(passwordEncoder.encode(adminDTO.password()));
         admin.setRole(Role.ADMIN);
-        return userRepository.save(admin);
+        return adminRepository.save(admin);
     }
 
     //  Register Teacher (Encrypt Password)

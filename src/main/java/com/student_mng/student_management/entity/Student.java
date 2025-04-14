@@ -2,23 +2,22 @@ package com.student_mng.student_management.entity;
 
 import com.student_mng.student_management.enums.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Entity
 @DiscriminatorValue("STUDENT")
 public class Student extends User {
 
     private String rollNumber;
+
+    private String firstName;
+    private String lastName;
+    private String contactNumber;
+    private String parentContactNumber;
+    private String parentEmail;
 
     @ManyToOne
     @JoinColumn(name = "class_id")
@@ -65,5 +64,45 @@ public class Student extends User {
 
     public void setStudentClass(ClassEntity studentClass) {
         this.studentClass = studentClass;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
+
+    public String getParentContactNumber() {
+        return parentContactNumber;
+    }
+
+    public void setParentContactNumber(String parentContactNumber) {
+        this.parentContactNumber = parentContactNumber;
+    }
+
+    public String getParentEmail() {
+        return parentEmail;
+    }
+
+    public void setParentEmail(String parentEmail) {
+        this.parentEmail = parentEmail;
     }
 }

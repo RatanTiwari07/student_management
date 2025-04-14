@@ -1,30 +1,24 @@
-package com.student_mng.student_management.entity;
+package com.student_mng.student_management.dto;
 
 import com.student_mng.student_management.enums.LectureSlotNumber;
-import jakarta.persistence.*;
 import java.time.DayOfWeek;
 
-@Entity
-public class LectureSlot {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+public class LectureSlotDTO {
     private String id;
-
-    @Enumerated(EnumType.STRING)
     private DayOfWeek weekDay;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private LectureSlotNumber slotNumber;
 
-    public LectureSlot() {}
+    // Default constructor
+    public LectureSlotDTO() {}
 
-    public LectureSlot(DayOfWeek weekDay, LectureSlotNumber slotNumber) {
+    // Constructor with fields
+    public LectureSlotDTO(String id, DayOfWeek weekDay, LectureSlotNumber slotNumber) {
+        this.id = id;
         this.weekDay = weekDay;
         this.slotNumber = slotNumber;
     }
 
+    // Getters and Setters
     public String getId() {
         return id;
     }
@@ -48,14 +42,4 @@ public class LectureSlot {
     public void setSlotNumber(LectureSlotNumber slotNumber) {
         this.slotNumber = slotNumber;
     }
-
-    // Convenience methods
-    public java.time.LocalTime getStartTime() {
-        return slotNumber.getStartTime();
-    }
-
-    public java.time.LocalTime getEndTime() {
-        return slotNumber.getEndTime();
-    }
 }
-

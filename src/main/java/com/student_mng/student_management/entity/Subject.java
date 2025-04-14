@@ -4,6 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Subject {
@@ -14,9 +17,12 @@ public class Subject {
 
     private String subjectName; // Example: "Mathematics"
 
-    public Subject () {}
+    @ManyToMany(mappedBy = "subjects")
+    private List<ClassEntity> classes = new ArrayList<>();
 
-    public Subject (String subjectName) {
+    public Subject() {}
+
+    public Subject(String subjectName) {
         this.subjectName = subjectName;
     }
 
@@ -35,5 +41,12 @@ public class Subject {
     public void setSubjectName(String subjectName) {
         this.subjectName = subjectName;
     }
-}
 
+    public List<ClassEntity> getClasses() {
+        return classes;
+    }
+
+    public void setClasses(List<ClassEntity> classes) {
+        this.classes = classes;
+    }
+}

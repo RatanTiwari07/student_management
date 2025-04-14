@@ -29,7 +29,7 @@ public class AdminController {
 
     // User Management
     @PostMapping("/users/admins")
-    public ResponseEntity<User> createAdmin(@RequestBody AdminDTO adminDTO) {
+    public ResponseEntity<Admin> createAdmin(@RequestBody AdminDTO adminDTO) {
         return ResponseEntity.ok(adminService.registerAdmin(adminDTO));
     }
 
