@@ -1,16 +1,19 @@
 package com.student_mng.student_management.entity;
 
+import com.student_mng.student_management.enums.BatchType;
 import com.student_mng.student_management.enums.Role;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.HashSet;
 import java.util.Set;
 
-
 @Entity
-@DiscriminatorValue("STUDENT")
+@Getter
+@Setter
 public class Student extends User {
 
+    @Column(unique = true)
     private String rollNumber;
 
     private String firstName;
@@ -23,8 +26,16 @@ public class Student extends User {
     @JoinColumn(name = "class_id")
     private ClassEntity studentClass;
 
-    @ManyToMany(mappedBy = "registeredStudents")
-    private Set<Event> registeredEvents = new HashSet<>();
+    @Enumerated(EnumType.STRING)
+    private BatchType batch;
+
+    @ManyToMany
+    @JoinTable(
+            name = "student_events",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
+    private Set<Event> registeredEvents;
 
     public Student () {}
 

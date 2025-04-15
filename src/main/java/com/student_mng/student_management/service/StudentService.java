@@ -52,36 +52,25 @@ public class StudentService {
         }
     }
 
-//    public Map<String, Double> getAllSubjectsAttendance(String username) {
-//        Student student = getStudentByUsername(username);
-//        Map<String, Double> attendancePercentages = new HashMap<>();
-//
-//        // Get all subjects for the student's class
-//        List<Subject> subjects = student.getStudentClass().getSubjects();
-//
-//        for (Subject subject : subjects) {
-//            Double percentage = calculateAttendancePercentage(student, subject.getId());
-//            attendancePercentages.put(subject.getSubjectName(), percentage);
-//        }
-//
-//        return attendancePercentages;
-//    }
+    public Map<String, Double> getAllSubjectsAttendance(String username) {
+        Student student = getStudentByUsername(username);
+        Map<String, Double> attendancePercentages = new HashMap<>();
 
-//    public Double getAttendancePercentage(String username, String subjectId) {
-//        Student student = getStudentByUsername(username);
-//        return calculateAttendancePercentage(student, subjectId);
-//    }
+        // Get all subjects for the student's class
+        List<Subject> subjects = student.getStudentClass().getSubjects();
 
-//    private Double calculateAttendancePercentage(Student student, String subjectId) {
-//        Long presentCount = attendanceRepository.countPresentAttendances(student, subjectId);
-//        Long totalCount = attendanceRepository.countTotalAttendances(student, subjectId);
-//
-//        if (totalCount == 0) {
-//            return 0.0;
-//        }
-//
-//        return (double) (presentCount * 100) / totalCount;
-//    }
+        for (Subject subject : subjects) {
+            Double percentage = calculateAttendancePercentage(student, subject.getId());
+            attendancePercentages.put(subject.getSubjectName(), percentage);
+        }
+
+        return attendancePercentages;
+    }
+
+    public Double getAttendancePercentage(String username, String subjectId) {
+        Student student = getStudentByUsername(username);
+        return calculateAttendancePercentage(student, subjectId);
+    }
 
     public List<Student> getStudentsBelowAttendanceThreshold(String subjectId, Double threshold) {
         return attendanceRepository.findStudentsBelowAttendanceThreshold(subjectId, threshold);
