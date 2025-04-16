@@ -53,6 +53,14 @@ public class Student extends User {
         this.registeredEvents = registeredEvents;
     }
 
+    public BatchType getBatch() {
+        return batch;
+    }
+
+    public void setBatch(BatchType batch) {
+        this.batch = batch;
+    }
+
     public String getRollNumber() {
         return rollNumber;
     }

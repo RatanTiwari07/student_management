@@ -3,11 +3,19 @@ package com.student_mng.student_management.controller;
 import com.student_mng.student_management.dto.*;
 import com.student_mng.student_management.entity.*;
 import com.student_mng.student_management.service.AdminService;
+import com.student_mng.student_management.service.BulkUploadService;
+import com.student_mng.student_management.enums.FileType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("/api/v1/admin")
 @RestController
@@ -15,6 +23,9 @@ public class AdminController {
 
     @Autowired
     private AdminService adminService;
+
+    @Autowired
+    private BulkUploadService bulkUploadService;
 
     // Subject Management
     @PostMapping("/subjects")
@@ -112,6 +123,55 @@ public class AdminController {
     public ResponseEntity<List<Student>> assignStudentsToClass(@RequestBody AssignStudentsDTO assignStudentsDTO) {
         return ResponseEntity.ok(adminService.assignStudentsToClass(
                 assignStudentsDTO.studentIds(), assignStudentsDTO.classId()));
+    }
+
+    @PostMapping("/students/bulk-upload")
+    public ResponseEntity<BulkUploadResponse> bulkRegisterStudents(
+            @RequestParam("file") MultipartFile file) {
+        try {
+            String extension = getFileExtension(file.getOriginalFilename());
+            FileType fileType = FileType.fromExtension(extension);
+            
+            BulkUploadResponse response = bulkUploadService.processFile(
+                file, 
+                fileType,
+                this::registerStudent
+            );
+            
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                    .body(new BulkUploadResponse(0, 0, List.of(), 
+                        List.of("Invalid file format. Only CSV and Excel (xlsx) files are supported")));
+        }
+    }
+
+    @GetMapping("/students/bulk-upload/template")
+    public ResponseEntity<ByteArrayResource> downloadTemplate(
+            @RequestParam(defaultValue = "csv") String format) {
+        try {
+            FileType fileType = FileType.fromExtension(format);
+            ByteArrayResource resource = bulkUploadService.generateTemplate(fileType);
+            
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(fileType.getContentType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, 
+                        "attachment; filename=student-template." + fileType.getExtension())
+                    .body(resource);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    private void registerStudent(StudentDTO studentDTO) {
+        adminService.registerStudent(studentDTO);
+    }
+
+    private String getFileExtension(String filename) {
+        return Optional.ofNullable(filename)
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(filename.lastIndexOf(".") + 1).toLowerCase())
+                .orElse("");
     }
 }
 

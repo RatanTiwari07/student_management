@@ -9,13 +9,10 @@ import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, String> {
     Optional<Student> findByUsername(String username);
-    
+    boolean existsByRollNumber(String rollNumber);
     List<Student> findByStudentClass_Id(String classId);
-    
     List<Student> findByStudentClass_IdAndBatch(String classId, BatchType batch);
-    
     List<Student> findByStudentClassIsNull();
-    
     List<Student> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrRollNumberContainingIgnoreCase(
             String firstName, String lastName, String rollNumber);
 }

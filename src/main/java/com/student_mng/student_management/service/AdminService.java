@@ -6,7 +6,6 @@ import com.student_mng.student_management.dto.StudentDTO;
 import com.student_mng.student_management.dto.TeacherDTO;
 import com.student_mng.student_management.entity.*;
 import com.student_mng.student_management.enums.Role;
-import com.student_mng.student_management.exception.ResourceNotFoundException;
 import com.student_mng.student_management.exception.ValidationException;
 import com.student_mng.student_management.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -94,13 +93,14 @@ public class AdminService {
             throw new ValidationException("Roll number cannot be empty");
         }
         
-        // Validate class existence
-        ClassEntity studentClass = classRepository.findById(studentDTO.classId())
-                .orElseThrow(() -> new ResourceNotFoundException("Class not found with id: " + studentDTO.classId()));
-        
         // Check for duplicate email
         if (userRepository.existsByEmail(studentDTO.email())) {
             throw new ValidationException("Email already exists");
+        }
+        
+        // Check for duplicate roll number
+        if (studentRepository.existsByRollNumber(studentDTO.rollNumber())) {
+            throw new ValidationException("Roll number already exists");
         }
         
         Student student = new Student();
@@ -109,7 +109,13 @@ public class AdminService {
         student.setPassword(passwordEncoder.encode(studentDTO.password()));
         student.setRole(Role.STUDENT);
         student.setRollNumber(studentDTO.rollNumber());
-        student.setStudentClass(studentClass);
+        student.setFirstName(studentDTO.firstName());
+        student.setLastName(studentDTO.lastName());
+        student.setContactNumber(studentDTO.contactNumber());
+        student.setParentContactNumber(studentDTO.parentContactNumber());
+        student.setParentEmail(studentDTO.parentEmail());
+        student.setBatch(studentDTO.batch());
+        
         return studentRepository.save(student);
     }
 
