@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 @RestController
 public class AuthController {
 

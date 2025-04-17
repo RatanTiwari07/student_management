@@ -6,6 +6,8 @@ import com.student_mng.student_management.entity.TeacherAssignment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -43,4 +45,16 @@ public interface AttendanceRepository extends JpaRepository<Attendance, String> 
             TeacherAssignment assignment, LocalDate startDate, LocalDate endDate);
     
     List<Attendance> findByTeacherAssignmentOrderByDateDesc(TeacherAssignment assignment);
+
+    List<Attendance> findByStudentAndDateBetween(Student student, LocalDate startOfMonth, LocalDate endOfMonth);
+
+    Page<Attendance> findByTeacherAssignmentAndDateBetween(
+            TeacherAssignment assignment, 
+            LocalDate startDate, 
+            LocalDate endDate, 
+            Pageable pageable);
+
+    Page<Attendance> findByTeacherAssignment(
+            TeacherAssignment assignment, 
+            Pageable pageable);
 }

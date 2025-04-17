@@ -2,12 +2,15 @@ package com.student_mng.student_management.controller;
 
 import com.student_mng.student_management.dto.AttendanceSubmissionDTO;
 import com.student_mng.student_management.dto.AttendanceUpdateDTO;
-import com.student_mng.student_management.entity
-        .Attendance;
+import com.student_mng.student_management.entity.Attendance;
 import com.student_mng.student_management.entity.Student;
 import com.student_mng.student_management.entity.Teacher;
 import com.student_mng.student_management.entity.TeacherAssignment;
 import com.student_mng.student_management.service.TeacherService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @RequestMapping("/api/v1/teacher")
@@ -89,17 +93,36 @@ public class TeacherController{
 
     // Optional: View past attendance records
     @GetMapping("/attendance/history")
-    public ResponseEntity<List<Attendance>> getAttendanceHistory(
+    public ResponseEntity<Page<Attendance>> getAttendanceHistory(
             @RequestParam String teacherAssignmentId,
             @RequestParam(required = false) LocalDate startDate,
-            @RequestParam(required = false) LocalDate endDate) {
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "date,desc") String[] sort) {
         
-        return ResponseEntity.ok(teacherService.getAttendanceHistory(
+        Pageable pageable = PageRequest.of(page, size, 
+            Sort.by(Arrays.stream(sort)
+                .map(this::createOrder)
+                .toList()));
+        
+        return ResponseEntity.ok(teacherService.getAttendanceHistoryPaginated(
             getCurrentUsername(),
             teacherAssignmentId,
             startDate,
-            endDate
+            endDate,
+            pageable
         ));
+    }
+
+    private Sort.Order createOrder(String sort) {
+        String[] parts = sort.split(",");
+        return new Sort.Order(
+            parts.length > 1 && parts[1].equalsIgnoreCase("desc") 
+                ? Sort.Direction.DESC 
+                : Sort.Direction.ASC,
+            parts[0]
+        );
     }
 
     @PutMapping("/attendance/{attendanceId}")

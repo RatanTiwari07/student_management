@@ -11,6 +11,8 @@ import com.student_mng.student_management.repository.AttendanceRepository;
 import com.student_mng.student_management.repository.StudentRepository;
 import com.student_mng.student_management.repository.TeacherAssignmentRepository;
 import com.student_mng.student_management.repository.TeacherRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -139,6 +141,32 @@ public class TeacherService {
 
         // Otherwise return all attendance records for this assignment
         return attendanceRepository.findByTeacherAssignmentOrderByDateDesc(assignment);
+    }
+
+    public Page<Attendance> getAttendanceHistoryPaginated(
+            String username,
+            String teacherAssignmentId,
+            LocalDate startDate,
+            LocalDate endDate,
+            Pageable pageable) {
+        
+        // Verify teacher is authorized
+        if (!isAuthorizedForTeacherAssignment(username, teacherAssignmentId)) {
+            throw new ResourceNotFoundException("Teacher not authorized for this assignment");
+        }
+
+        TeacherAssignment assignment = teacherAssignmentRepository
+            .findById(teacherAssignmentId)
+            .orElseThrow(() -> new ResourceNotFoundException("Teacher Assignment not found"));
+
+        // If dates are provided, filter by date range
+        if (startDate != null && endDate != null) {
+            return attendanceRepository.findByTeacherAssignmentAndDateBetween(
+                assignment, startDate, endDate, pageable);
+        }
+
+        // Otherwise return all attendance records for this assignment
+        return attendanceRepository.findByTeacherAssignment(assignment, pageable);
     }
 
     private void validateAttendanceDate(LocalDate date) {
