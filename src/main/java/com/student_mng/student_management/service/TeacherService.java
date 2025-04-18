@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -88,9 +89,32 @@ public class TeacherService {
             throw new DuplicateAttendanceException("Attendance already marked for this date and lecture");
         }
 
-        List<Attendance> attendances = records.stream()
-            .map(record -> createAttendance(teacherAssignment, record, date))
-            .toList();
+        List<Attendance> attendances = new ArrayList<>();
+        
+        // For LAB sessions, create two attendance entries
+        if (teacherAssignment.getLectureType() == LectureType.LAB) {
+            // First slot attendance
+            List<Attendance> firstSlotAttendances = records.stream()
+                .map(record -> createAttendance(teacherAssignment, record, date))
+                .toList();
+            
+            // Second slot attendance (same records, different slot number)
+            List<Attendance> secondSlotAttendances = records.stream()
+                .map(record -> {
+                    Attendance attendance = createAttendance(teacherAssignment, record, date);
+                    attendance.setSlotNumber(2); // Indicate second slot
+                    return attendance;
+                })
+                .toList();
+            
+            attendances.addAll(firstSlotAttendances);
+            attendances.addAll(secondSlotAttendances);
+        } else {
+            // For THEORY lectures, create single attendance entry
+            attendances = records.stream()
+                .map(record -> createAttendance(teacherAssignment, record, date))
+                .toList();
+        }
 
         return attendanceRepository.saveAll(attendances);
     }
@@ -179,10 +203,6 @@ public class TeacherService {
         if (date.isBefore(today.minusDays(7))) {
             throw new InvalidDateException("Cannot mark attendance for dates older than 7 days");
         }
-
-        // if (holidayService.isHoliday(date)) {
-        //     throw new InvalidDateException("Cannot mark attendance for holidays");
-        // }
     }
 
     @Transactional

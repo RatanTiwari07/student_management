@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/student/timetable")
 @RestController
 public class StudentTimetableController implements BaseStudentController {
-
-
     
 //    private final StudentService studentService;
 //

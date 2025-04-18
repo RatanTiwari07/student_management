@@ -33,6 +33,9 @@ public class Attendance {
     @Column(nullable = false)
     private boolean present;
 
+    @Column(nullable = false)
+    private int slotNumber = 1;
+
     public Attendance () {}
 
     public Attendance(Student student, TeacherAssignment teacherAssignment,
@@ -99,6 +102,14 @@ public class Attendance {
 
     public void setPresent(boolean present) {
         this.present = present;
+    }
+
+    public void setSlotNumber(int slotNumber) {
+        this.slotNumber = slotNumber;
+    }
+
+    public int getSlotNumber() {
+        return slotNumber;
     }
 }
 

@@ -3,20 +3,24 @@ package com.student_mng.student_management.repository;
 import com.student_mng.student_management.entity.Attendance;
 import com.student_mng.student_management.entity.Student;
 import com.student_mng.student_management.entity.TeacherAssignment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Repository
 public interface AttendanceRepository extends JpaRepository<Attendance, String> {
     List<Attendance> findByStudentOrderByDateDesc(Student student);
     
     List<Attendance> findByStudentAndDateBetweenOrderByDateDesc(
             Student student, LocalDate startDate, LocalDate endDate);
+    
+    List<Attendance> findByStudentAndTeacherAssignment_Subject_Id(Student student, String subjectId);
     
     List<Attendance> findByStudentAndTeacherAssignment_Subject_IdOrderByDateDesc(
             Student student, String subjectId);

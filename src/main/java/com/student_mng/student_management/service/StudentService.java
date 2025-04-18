@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 //@Transactional(readOnly = true)
@@ -77,14 +78,40 @@ public class StudentService {
     }
 
     private Double calculateAttendancePercentage(Student student, String subjectId) {
-        Long presentCount = attendanceRepository.countPresentAttendances(student, subjectId);
-        Long totalCount = attendanceRepository.countTotalAttendances(student, subjectId);
+        // Get all attendance records for the student and subject
+        List<Attendance> attendances = attendanceRepository.findByStudentAndTeacherAssignment_Subject_Id(
+            student, subjectId);
 
-        if (totalCount == 0) {
+        if (attendances.isEmpty()) {
             return 0.0;
         }
 
-        return (double) (presentCount * 100) / totalCount;
+        // Group attendances by date and teacher assignment to handle lab sessions
+        Map<String, List<Attendance>> groupedAttendances = attendances.stream()
+            .collect(Collectors.groupingBy(attendance -> 
+                attendance.getDate().toString() + "_" + attendance.getTeacherAssignment().getId()));
+
+        long totalPresent = 0;
+        long totalSessions = groupedAttendances.size(); // Each group represents one session (lab or theory)
+
+        // Calculate present sessions
+        for (List<Attendance> sessionAttendances : groupedAttendances.values()) {
+            // For lab sessions (will have 2 records), student needs to be present in both slots
+            if (sessionAttendances.size() > 1) {
+                boolean presentInAllSlots = sessionAttendances.stream()
+                    .allMatch(Attendance::isPresent);
+                if (presentInAllSlots) {
+                    totalPresent++;
+                }
+            } else {
+                // For theory sessions (single record)
+                if (sessionAttendances.get(0).isPresent()) {
+                    totalPresent++;
+                }
+            }
+        }
+
+        return totalSessions == 0 ? 0.0 : (double) (totalPresent * 100) / totalSessions;
     }
 
     @Transactional

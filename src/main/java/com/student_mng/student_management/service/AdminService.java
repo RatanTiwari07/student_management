@@ -48,6 +48,11 @@ public class AdminService {
 
     //  Register Admin (Encrypt Password)
     public Admin registerAdmin(AdminDTO adminDTO) {
+
+        if (userRepository.existsByEmail(adminDTO.email())) {
+            throw new ValidationException("Email already exists");
+        }
+
         Admin admin = new Admin();
         admin.setUsername(adminDTO.username());
         admin.setEmail(adminDTO.email());
@@ -59,6 +64,11 @@ public class AdminService {
 
     //  Register Teacher (Encrypt Password)
     public Teacher registerTeacher(TeacherDTO teacherDTO) {
+
+        if (userRepository.existsByEmail(teacherDTO.email())) {
+            throw new ValidationException("Email already exists");
+        }
+
         Teacher teacher = new Teacher();
         teacher.setUsername(teacherDTO.username());
         teacher.setEmail(teacherDTO.email());
@@ -79,6 +89,11 @@ public class AdminService {
 
     //  Register ClubHead (Encrypt Password)
     public ClubHead registerClubHead(ClubHeadDTO clubHeadDTO) {
+
+        if (userRepository.existsByEmail(clubHeadDTO.email())) {
+            throw new ValidationException("Email already exists");
+        }
+
         ClubHead clubHead = new ClubHead();
         clubHead.setUsername(clubHeadDTO.username());
         clubHead.setEmail(clubHeadDTO.email());
