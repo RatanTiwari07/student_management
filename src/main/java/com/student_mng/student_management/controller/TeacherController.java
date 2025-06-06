@@ -2,10 +2,7 @@ package com.student_mng.student_management.controller;
 
 import com.student_mng.student_management.dto.AttendanceSubmissionDTO;
 import com.student_mng.student_management.dto.AttendanceUpdateDTO;
-import com.student_mng.student_management.entity.Attendance;
-import com.student_mng.student_management.entity.Student;
-import com.student_mng.student_management.entity.Teacher;
-import com.student_mng.student_management.entity.TeacherAssignment;
+import com.student_mng.student_management.entity.*;
 import com.student_mng.student_management.service.TeacherService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +37,11 @@ public class TeacherController{
     @GetMapping("/profile")
     public ResponseEntity<Teacher> getTeacherProfile() {
         return ResponseEntity.ok(teacherService.getTeacherByUsername(getCurrentUsername()));
+    }
+
+    @GetMapping("/classes")
+    public ResponseEntity<List<ClassEntity>> getTeachingClasses() {
+        return ResponseEntity.ok(teacherService.getTeacherClasses(getCurrentUsername()));
     }
 
     // Teaching assignments endpoints

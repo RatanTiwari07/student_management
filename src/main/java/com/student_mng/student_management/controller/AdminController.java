@@ -68,9 +68,15 @@ public class AdminController {
     }
 
     // Class Management
+
+    @GetMapping()
+    public ResponseEntity<List<LectureSlot>> getLectureSlots() {
+        return ResponseEntity.ok(adminService.getAllLectureSlots());
+    }
+
     @PostMapping("/classes")
-    public ResponseEntity<ClassEntity> createClass(@RequestBody ClassEntity classEntity) {
-        return ResponseEntity.ok(adminService.registerClass(classEntity));
+    public ResponseEntity<ClassEntity> createClass(@RequestBody ClassDTO classDTO) {
+        return ResponseEntity.ok(adminService.registerClass(classDTO));
     }
 
     @GetMapping("/classes")

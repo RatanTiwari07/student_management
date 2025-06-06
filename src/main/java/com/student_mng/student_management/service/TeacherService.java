@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TeacherService {
@@ -224,5 +225,18 @@ public class TeacherService {
 //        attendance.setLastModifiedBy(username);
         
         return attendanceRepository.save(attendance);
+    }
+
+    public List<ClassEntity> getTeacherClasses(String username) {
+        Teacher teacher = getTeacherByUsername(username);
+        
+        // Get all teacher assignments
+        List<TeacherAssignment> assignments = teacherAssignmentRepository.findByTeacher(teacher);
+        
+        // Extract unique classes from assignments
+        return assignments.stream()
+            .map(TeacherAssignment::getAssignedClass)
+            .distinct()
+            .collect(Collectors.toList());
     }
 }

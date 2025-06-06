@@ -1,9 +1,6 @@
 package com.student_mng.student_management.service;
 
-import com.student_mng.student_management.dto.AdminDTO;
-import com.student_mng.student_management.dto.ClubHeadDTO;
-import com.student_mng.student_management.dto.StudentDTO;
-import com.student_mng.student_management.dto.TeacherDTO;
+import com.student_mng.student_management.dto.*;
 import com.student_mng.student_management.entity.*;
 import com.student_mng.student_management.enums.Role;
 import com.student_mng.student_management.exception.ValidationException;
@@ -40,6 +37,8 @@ public class AdminService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    private LectureSlotRepository lectureSlotRepository;
 
     //  Register Subject (Direct Save)
     public Subject registerSubject(Subject subject) {
@@ -83,7 +82,15 @@ public class AdminService {
     }
 
     //  Register Class (Direct Save)
-    public ClassEntity registerClass(ClassEntity classEntity) {
+    public ClassEntity registerClass(ClassDTO classDTO) {
+        ClassEntity classEntity = new ClassEntity();
+        classEntity.setClassName(classDTO.className());
+
+        if (classDTO.subjectIds() != null && !classDTO.subjectIds().isEmpty()) {
+            List<Subject> subjects = subjectRepository.findAllById(classDTO.subjectIds());
+            classEntity.setSubjects(subjects);
+        }
+
         return classRepository.save(classEntity);
     }
 
@@ -183,10 +190,13 @@ public class AdminService {
         return studentRepository.findByStudentClassIsNull();
     }
 
+    public List<LectureSlot> getAllLectureSlots() {
+        return lectureSlotRepository.findAll();
+    }
+
     private void validateStudentData(StudentDTO studentDTO) {
         if (studentDTO.rollNumber() == null || studentDTO.rollNumber().trim().isEmpty()) {
             throw new ValidationException("Roll number cannot be empty");
         }
-        // Add more validation rules
     }
 }

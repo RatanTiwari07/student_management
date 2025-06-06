@@ -44,8 +44,9 @@ AuthenticationManager authenticationManager;
 
     }
 
-        @Autowired
-        BCryptPasswordEncoder ps;
+    @Autowired
+    BCryptPasswordEncoder ps;
+
     @GetMapping("/regDemo")
     public Admin regDemoAdmin () {
 
