@@ -50,7 +50,7 @@ AuthenticationManager authenticationManager;
     @GetMapping("/regDemo")
     public Admin regDemoAdmin () {
 
-        Admin a = new Admin("lalitoam", passwordEncoder.encode("123456"), Role.ADMIN, "CSE");
+        Admin a = new Admin("lalitoam", passwordEncoder.encode("123456"), "demo@gmail.com", Role.ADMIN, "CSE");
         adminRepo.save(a);
         return a;
     }

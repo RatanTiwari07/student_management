@@ -79,9 +79,14 @@ public class AdminController {
     }
 
     @GetMapping("/classes")
-    public ResponseEntity<List<ClassEntity>> getAllClasses() {
-        return ResponseEntity.ok(adminService.getAllClasses());
+    public ResponseEntity<List<ClassResponseDTO>> getAllClasses() {
+        List<ClassResponseDTO> classes = adminService.getAllClasses()
+                .stream()
+                .map(ClassResponseDTO::fromEntity)
+                .toList();
+        return ResponseEntity.ok(classes);
     }
+
 
     @GetMapping("/classes/{id}")
     public ResponseEntity<ClassEntity> getClassById(@PathVariable String id) {

@@ -17,8 +17,8 @@ public class Teacher extends User {
 
     public Teacher () {}
 
-    public Teacher(String username, String password, Role role, List<TeacherAssignment> assignments) {
-        super(username, password, role);
+    public Teacher(String username, String password, String email, Role role, List<TeacherAssignment> assignments) {
+        super(username, password, role, email);
         this.assignments = assignments;
     }
 

@@ -39,9 +39,9 @@ public class Student extends User {
 
     public Student () {}
 
-    public Student(String username, String password, Role role, String rollNumber,
+    public Student(String username, String password, Role role, String rollNumber, String email,
                    ClassEntity studentClass, Set<Event> registeredEvents) {
-        super(username, password, role);
+        super(username, password, role, email);
         this.rollNumber = rollNumber;
         this.studentClass = studentClass;
         this.registeredEvents = registeredEvents;

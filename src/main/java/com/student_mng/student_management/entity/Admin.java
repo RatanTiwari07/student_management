@@ -13,8 +13,8 @@ public class Admin extends User {
 
     public Admin(){}
 
-    public Admin(String username, String password, Role role, String department) {
-        super(username, password, role);
+    public Admin(String username, String password, String email, Role role, String department) {
+        super(username, password, role, email);
         this.department = department;
     }
 

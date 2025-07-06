@@ -20,8 +20,8 @@ public class ClubHead extends User {
 
     public ClubHead () {}
 
-    public ClubHead(String username, String password, Role role, String clubName, List<Event> events) {
-        super(username, password, role);
+    public ClubHead(String username, String password, String email, Role role, String clubName, List<Event> events) {
+        super(username, password, role, email);
         this.clubName = clubName;
         this.events = events;
     }

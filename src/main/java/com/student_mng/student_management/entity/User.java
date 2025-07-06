@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Single table for all users
-@DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "role_type", discriminatorType = DiscriminatorType.STRING)
 public class User {
 
     @Id
@@ -29,6 +29,7 @@ public class User {
     public User(String username, String password, Role role, String email) {
         this.username = username;
         this.password = password;
+        this.email = email;
         this.role = role;
     }
 
