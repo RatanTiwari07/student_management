@@ -3,7 +3,7 @@ package com.student_mng.student_management.enums;
 import java.time.LocalTime;
 
 public enum LectureSlotNumber {
-    SLOT_1(LocalTime.of(8, 30), LocalTime.of(9, 30)),
+    SLOT_1(LocalTime.of(8, 20), LocalTime.of(9, 30)),
     SLOT_2(LocalTime.of(9, 30), LocalTime.of(10, 30)),
     SLOT_3(LocalTime.of(10, 30), LocalTime.of(11, 30)),
     SLOT_4(LocalTime.of(11, 30), LocalTime.of(12, 30)),

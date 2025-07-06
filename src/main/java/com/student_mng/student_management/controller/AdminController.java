@@ -68,8 +68,7 @@ public class AdminController {
     }
 
     // Class Management
-
-    @GetMapping()
+    @GetMapping("/lecture-slots")
     public ResponseEntity<List<LectureSlot>> getLectureSlots() {
         return ResponseEntity.ok(adminService.getAllLectureSlots());
     }
