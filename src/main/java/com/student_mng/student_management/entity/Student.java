@@ -37,6 +37,10 @@ public class Student extends User {
     )
     private Set<Event> registeredEvents;
 
+    // New field to track if student is a club head
+    @OneToOne(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ClubHead clubHead;
+
     public Student () {}
 
     public Student(String username, String password, Role role, String rollNumber, String email,

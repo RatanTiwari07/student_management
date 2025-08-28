@@ -1,8 +1,10 @@
 package com.student_mng.student_management.entity;
 
 import com.student_mng.student_management.enums.BatchType;
+import com.student_mng.student_management.enums.LectureSlotNumber;
 import jakarta.persistence.*;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 @Entity
@@ -20,9 +22,14 @@ public class Attendance {
     @JoinColumn(name = "teacher_assignment_id", nullable = false)
     private TeacherAssignment teacherAssignment;
 
-    @ManyToOne
-    @JoinColumn(name = "lecture_slot_id", nullable = false)
-    private LectureSlot lectureSlot;
+    // Store schedule info directly instead of referencing LectureSlot entity
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DayOfWeek weekDay;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LectureSlotNumber lectureSlotNumber;
 
     @Enumerated(EnumType.STRING)
     private BatchType batch; // B1, B2, NULL (for THEORY)
@@ -39,10 +46,11 @@ public class Attendance {
     public Attendance () {}
 
     public Attendance(Student student, TeacherAssignment teacherAssignment,
-                      LectureSlot lectureSlot, BatchType batch, LocalDate date, boolean present) {
+                      DayOfWeek weekDay, LectureSlotNumber lectureSlotNumber, BatchType batch, LocalDate date, boolean present) {
         this.student = student;
         this.teacherAssignment = teacherAssignment;
-        this.lectureSlot = lectureSlot;
+        this.weekDay = weekDay;
+        this.lectureSlotNumber = lectureSlotNumber;
         this.batch = batch;
         this.date = date;
         this.present = present;
@@ -72,12 +80,20 @@ public class Attendance {
         this.teacherAssignment = teacherAssignment;
     }
 
-    public LectureSlot getLectureSlot() {
-        return lectureSlot;
+    public DayOfWeek getWeekDay() {
+        return weekDay;
     }
 
-    public void setLectureSlot(LectureSlot lectureSlot) {
-        this.lectureSlot = lectureSlot;
+    public void setWeekDay(DayOfWeek weekDay) {
+        this.weekDay = weekDay;
+    }
+
+    public LectureSlotNumber getLectureSlotNumber() {
+        return lectureSlotNumber;
+    }
+
+    public void setLectureSlotNumber(LectureSlotNumber lectureSlotNumber) {
+        this.lectureSlotNumber = lectureSlotNumber;
     }
 
     public BatchType getBatch() {
@@ -112,4 +128,3 @@ public class Attendance {
         return slotNumber;
     }
 }
-

@@ -4,6 +4,7 @@ import com.student_mng.student_management.dto.AttendanceSubmissionDTO;
 import com.student_mng.student_management.entity.*;
 import com.student_mng.student_management.enums.BatchType;
 import com.student_mng.student_management.enums.LectureType;
+import com.student_mng.student_management.enums.LectureSlotNumber;
 import com.student_mng.student_management.exception.DuplicateAttendanceException;
 import com.student_mng.student_management.exception.InvalidDateException;
 import com.student_mng.student_management.exception.ResourceNotFoundException;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -126,13 +128,15 @@ public class TeacherService {
         Student student = studentRepository.findById(record.studentId())
             .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
 
-        LectureSlot lectureSlot = teacherAssignment.getLectureSlot();
+        DayOfWeek weekDay = teacherAssignment.getWeekDay();
+        LectureSlotNumber lectureSlotNumber = teacherAssignment.getSlotNumber();
         BatchType batch = teacherAssignment.getBatch();
 
         return new Attendance(
             student, 
             teacherAssignment,
-            lectureSlot,
+            weekDay,
+            lectureSlotNumber,
             batch,
             date, 
             record.present()

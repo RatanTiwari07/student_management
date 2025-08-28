@@ -68,11 +68,6 @@ public class AdminController {
     }
 
     // Class Management
-    @GetMapping("/lecture-slots")
-    public ResponseEntity<List<LectureSlot>> getLectureSlots() {
-        return ResponseEntity.ok(adminService.getAllLectureSlots());
-    }
-
     @PostMapping("/classes")
     public ResponseEntity<ClassEntity> createClass(@RequestBody ClassDTO classDTO) {
         return ResponseEntity.ok(adminService.registerClass(classDTO));
@@ -99,6 +94,43 @@ public class AdminController {
     @PostMapping("/club-heads")
     public ResponseEntity<ClubHead> createClubHead(@RequestBody ClubHeadDTO clubHeadDTO) {
         return ResponseEntity.ok(adminService.registerClubHead(clubHeadDTO));
+    }
+
+    // New endpoint to assign a student as club head
+    @PostMapping("/students/{studentId}/assign-clubhead")
+    public ResponseEntity<ClubHead> assignStudentAsClubHead(
+            @PathVariable String studentId,
+            @RequestBody AssignClubHeadDTO assignDTO) {
+        // Override studentId from path parameter
+        AssignClubHeadDTO dto = new AssignClubHeadDTO(studentId, assignDTO.clubName());
+        return ResponseEntity.ok(adminService.assignStudentAsClubHead(dto));
+    }
+
+    // Remove club head status from a student
+    @DeleteMapping("/students/{studentId}/remove-clubhead")
+    public ResponseEntity<Void> removeClubHeadStatus(@PathVariable String studentId) {
+        adminService.removeClubHeadStatus(studentId);
+        return ResponseEntity.ok().build();
+    }
+
+    // Update club information for a student club head
+    @PutMapping("/students/{studentId}/clubhead")
+    public ResponseEntity<ClubHead> updateStudentClubHeadInfo(
+            @PathVariable String studentId,
+            @RequestBody UpdateClubHeadDTO updateDTO) {
+        return ResponseEntity.ok(adminService.updateStudentClubHeadInfo(studentId, updateDTO.clubName()));
+    }
+
+    // Get all students who are club heads
+    @GetMapping("/students/clubheads")
+    public ResponseEntity<List<Student>> getStudentsWhoAreClubHeads() {
+        return ResponseEntity.ok(adminService.getStudentsWhoAreClubHeads());
+    }
+
+    // Check if a student is a club head
+    @GetMapping("/students/{studentId}/is-clubhead")
+    public ResponseEntity<Boolean> isStudentClubHead(@PathVariable String studentId) {
+        return ResponseEntity.ok(adminService.isStudentClubHead(studentId));
     }
 
     @GetMapping("/club-heads")
@@ -141,18 +173,18 @@ public class AdminController {
         try {
             String extension = getFileExtension(file.getOriginalFilename());
             FileType fileType = FileType.fromExtension(extension);
-            
+
             BulkUploadResponse response = bulkUploadService.processFile(
-                file, 
-                fileType,
-                this::registerStudent
+                    file,
+                    fileType,
+                    this::registerStudent
             );
-            
+
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
-                    .body(new BulkUploadResponse(0, 0, List.of(), 
-                        List.of("Invalid file format. Only CSV and Excel (xlsx) files are supported")));
+                    .body(new BulkUploadResponse(0, 0, List.of(),
+                            List.of("Invalid file format. Only CSV and Excel (xlsx) files are supported")));
         }
     }
 
@@ -162,11 +194,11 @@ public class AdminController {
         try {
             FileType fileType = FileType.fromExtension(format);
             ByteArrayResource resource = bulkUploadService.generateTemplate(fileType);
-            
+
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(fileType.getContentType()))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, 
-                        "attachment; filename=student-template." + fileType.getExtension())
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=student-template." + fileType.getExtension())
                     .body(resource);
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();
@@ -184,4 +216,3 @@ public class AdminController {
                 .orElse("");
     }
 }
-

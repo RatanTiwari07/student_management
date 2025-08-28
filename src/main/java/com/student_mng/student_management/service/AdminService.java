@@ -37,8 +37,6 @@ public class AdminService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private StudentRepository studentRepository;
-    @Autowired
-    private LectureSlotRepository lectureSlotRepository;
 
     //  Register Subject (Direct Save)
     public Subject registerSubject(Subject subject) {
@@ -107,6 +105,66 @@ public class AdminService {
         clubHead.setPassword(passwordEncoder.encode(clubHeadDTO.password()));
         clubHead.setRole(Role.CLUBHEAD);
         return clubHeadRepository.save(clubHead);
+    }
+
+    // New method to assign a student as club head
+    public ClubHead assignStudentAsClubHead(AssignClubHeadDTO assignDTO) {
+        // Find the student
+        Student student = studentRepository.findById(assignDTO.studentId())
+                .orElseThrow(() -> new ValidationException("Student not found with id: " + assignDTO.studentId()));
+
+        // Check if student is already a club head
+        if (clubHeadRepository.existsByStudent(student)) {
+            throw new ValidationException("Student is already assigned as a club head");
+        }
+
+        // Create club head entity
+        ClubHead clubHead = new ClubHead();
+        clubHead.setUsername(student.getUsername() + "_clubhead");
+        clubHead.setEmail(student.getEmail());
+        clubHead.setPassword(student.getPassword()); // Use same password as student
+        clubHead.setRole(Role.CLUBHEAD);
+        clubHead.setClubName(assignDTO.clubName());
+        clubHead.setStudent(student);
+
+        return clubHeadRepository.save(clubHead);
+    }
+
+    // Method to remove club head status from a student
+    public void removeClubHeadStatus(String studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new ValidationException("Student not found with id: " + studentId));
+
+        ClubHead clubHead = clubHeadRepository.findByStudent(student)
+                .orElseThrow(() -> new ValidationException("Student is not assigned as a club head"));
+
+        clubHeadRepository.delete(clubHead);
+    }
+
+    // Method to update club name for a student club head
+    public ClubHead updateStudentClubHeadInfo(String studentId, String newClubName) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new ValidationException("Student not found with id: " + studentId));
+
+        ClubHead clubHead = clubHeadRepository.findByStudent(student)
+                .orElseThrow(() -> new ValidationException("Student is not assigned as a club head"));
+
+        clubHead.setClubName(newClubName);
+        return clubHeadRepository.save(clubHead);
+    }
+
+    // Method to get all students who are club heads
+    public List<Student> getStudentsWhoAreClubHeads() {
+        return clubHeadRepository.findAll().stream()
+                .map(ClubHead::getStudent)
+                .toList();
+    }
+
+    // Method to check if a student is a club head
+    public boolean isStudentClubHead(String studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new ValidationException("Student not found with id: " + studentId));
+        return clubHeadRepository.existsByStudent(student);
     }
 
     public Student registerStudent(StudentDTO studentDTO) {
@@ -188,10 +246,6 @@ public class AdminService {
 
     public List<Student> getUnassignedStudents() {
         return studentRepository.findByStudentClassIsNull();
-    }
-
-    public List<LectureSlot> getAllLectureSlots() {
-        return lectureSlotRepository.findAll();
     }
 
     private void validateStudentData(StudentDTO studentDTO) {

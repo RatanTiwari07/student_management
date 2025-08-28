@@ -2,7 +2,10 @@ package com.student_mng.student_management.entity;
 
 import com.student_mng.student_management.enums.BatchType;
 import com.student_mng.student_management.enums.LectureType;
+import com.student_mng.student_management.enums.LectureSlotNumber;
 import jakarta.persistence.*;
+
+import java.time.DayOfWeek;
 
 @Entity
 public class TeacherAssignment {
@@ -30,20 +33,26 @@ public class TeacherAssignment {
     @Enumerated(EnumType.STRING)
     private BatchType batch; // B1, B2 for LAB, NULL for THEORY
 
-    @ManyToOne
-    @JoinColumn(name = "lecture_slot_id", nullable = false)
-    private LectureSlot lectureSlot;
+    // Replace LectureSlot entity with simple enum fields
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DayOfWeek weekDay;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LectureSlotNumber slotNumber;
 
     public TeacherAssignment () {}
 
     public TeacherAssignment(Teacher teacher, ClassEntity assignedClass, Subject subject,
-                             LectureType lectureType, BatchType batch, LectureSlot lectureSlot) {
+                             LectureType lectureType, BatchType batch, DayOfWeek weekDay, LectureSlotNumber slotNumber) {
         this.teacher = teacher;
         this.assignedClass = assignedClass;
         this.subject = subject;
         this.lectureType = lectureType;
         this.batch = batch;
-        this.lectureSlot = lectureSlot;
+        this.weekDay = weekDay;
+        this.slotNumber = slotNumber;
     }
 
     public String getId() {
@@ -94,12 +103,28 @@ public class TeacherAssignment {
         this.batch = batch;
     }
 
-    public LectureSlot getLectureSlot() {
-        return lectureSlot;
+    public DayOfWeek getWeekDay() {
+        return weekDay;
     }
 
-    public void setLectureSlot(LectureSlot lectureSlot) {
-        this.lectureSlot = lectureSlot;
+    public void setWeekDay(DayOfWeek weekDay) {
+        this.weekDay = weekDay;
+    }
+
+    public LectureSlotNumber getSlotNumber() {
+        return slotNumber;
+    }
+
+    public void setSlotNumber(LectureSlotNumber slotNumber) {
+        this.slotNumber = slotNumber;
+    }
+
+    // Convenience methods for getting time information
+    public java.time.LocalTime getStartTime() {
+        return slotNumber.getStartTime();
+    }
+
+    public java.time.LocalTime getEndTime() {
+        return slotNumber.getEndTime();
     }
 }
-
