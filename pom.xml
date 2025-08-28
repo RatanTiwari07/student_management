@@ -99,7 +99,16 @@
 			<version>5.2.3</version>
 		</dependency>
 
-		<!-- For Batch Processing -->
+		<!-- Swagger/OpenAPI 3 Documentation -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.7.0</version>
+		</dependency>
+
+
+
+		<!-- Spring Batch -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-batch</artifactId>

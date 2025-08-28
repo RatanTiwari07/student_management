@@ -43,6 +43,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/teacher/**").hasRole("TEACHER")
                         .requestMatchers("/api/v1/student/**").hasRole("STUDENT")
                         .requestMatchers("/api/v1/auth/**", "/api/v1/public/**").permitAll()
+                        // Allow access to Swagger/OpenAPI endpoints
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
@@ -71,14 +73,27 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // FRONTED PORT
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedOriginPatterns(List.of("*")); // Allow all origins
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*")); // Allow all headers
         configuration.setAllowCredentials(true);
 
+        CorsConfiguration swaggerConfiguration = new CorsConfiguration();
+        swaggerConfiguration.setAllowedOriginPatterns(List.of("*"));
+        swaggerConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        swaggerConfiguration.setAllowedHeaders(List.of("*"));
+        swaggerConfiguration.setAllowCredentials(false); // Disable credentials for Swagger
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration("/swagger-ui/**", swaggerConfiguration);
+        source.registerCorsConfiguration("/api-docs/**", swaggerConfiguration);
+        source.registerCorsConfiguration("/v3/api-docs/**", swaggerConfiguration);
+
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 
